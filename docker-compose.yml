@@ -4,7 +4,7 @@ services:
     image : mongo
     container_name: mongodb
     volumes:
-      - ./graphql_test:/data/db
+      - ./graphql_test_db:/data/db
     ports:
       - 27017:27017
     restart: unless-stopped

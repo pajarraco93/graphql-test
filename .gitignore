@@ -1,4 +1,4 @@
 vendor/
-graphql_test/
+graphql_test_db/
 
 .DS_Store
