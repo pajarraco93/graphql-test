@@ -1,38 +1,21 @@
 package main
 
 import (
+	"log"
 	"net/http"
 
-	"github.com/graphql-go/graphql"
-	"github.com/graphql-go/handler"
-
+	"github.com/pajarraco93/graphql-test/src/shared/infra/adapters/graphql"
 	"github.com/pajarraco93/graphql-test/src/shared/infra/adapters/mongo"
 )
 
-var queryType = graphql.NewObject(graphql.ObjectConfig{
-	Name: "Query",
-	Fields: graphql.Fields{
-		"latestPost": &graphql.Field{
-			Type: graphql.String,
-			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-				return "Hello World!", nil
-			},
-		},
-	},
-})
-
-var schema, _ = graphql.NewSchema(graphql.SchemaConfig{
-	Query: queryType,
-})
-
 func main() {
-	mongoDB := mongo.NewMongoRepository()
+	_, err := mongo.NewMongoRepository()
+	if err != nil {
+		log.Fatal("Error with MongoDB: ", err)
+	}
+	//defer mongoDB.disconnect()
 
-	h := handler.New(&handler.Config{
-		Schema: &schema,
-		Pretty: true,
-	})
-
+	h := graphql.NewGraphQLHandler()
 	http.Handle("/graphql", h)
 
 	http.ListenAndServe(":8080", nil)

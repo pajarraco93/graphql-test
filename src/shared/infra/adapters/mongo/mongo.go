@@ -15,21 +15,21 @@ type MongoRepository struct {
 	client *mongo.Client
 }
 
-func NewMongoRepository() domain.Repository {
+func NewMongoRepository() (domain.Repository, error) {
 	client, err := mongo.NewClient(options.Client().ApplyURI("mongodb://localhost:27017"))
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	repo := MongoRepository{client}
+	repo := &MongoRepository{client}
 	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
 
 	err = repo.connect(ctx)
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
 
-	return repo
+	return repo, nil
 }
 
 func (m *MongoRepository) connect(ctx context.Context) error {
@@ -41,6 +41,6 @@ func (m *MongoRepository) connect(ctx context.Context) error {
 	return nil
 }
 
-func (m *MongoRepository) disconnect(ctx context.Context) error {
-	return m.client.Disconnect(ctx)
+func (m *MongoRepository) Disconnect() error {
+	return m.client.Disconnect(context.Background())
 }
