@@ -15,7 +15,7 @@ type Album {
 type Song {
   id: ID!
   name: String!
-  appearsIn: [Album!]
+  appearsIn: Album!
 }
 
 type Query {
@@ -35,7 +35,7 @@ input newAlbum {
 
 input newSong {
   name: String!
-  appearsIn: [newAlbum!]
+  appearsIn: newAlbum!
 }
 
 type Mutation {

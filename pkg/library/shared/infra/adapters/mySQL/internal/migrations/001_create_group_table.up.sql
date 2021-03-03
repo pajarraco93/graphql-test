@@ -1,0 +1,6 @@
+CREATE TABLE IF NOT EXISTS Groups (
+    groupID int NOT NULL AUTO_INCREMENT,
+    name VARCHAR(20) NOT NULL,
+    genre VARCHAR(20),
+    PRIMARY KEY (groupID)
+);

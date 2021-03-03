@@ -5,16 +5,18 @@ import (
 	"fmt"
 	"log"
 
+	_ "github.com/go-sql-driver/mysql"
 	"github.com/golang-migrate/migrate"
 	"github.com/golang-migrate/migrate/database/mysql"
+	_ "github.com/golang-migrate/migrate/source/file"
 
 	"github.com/pajarraco93/graphql-test/pkg/library/domain"
 )
 
 const (
 	username = "root"
-	password = "secret"
-	hostname = "127.0.0.1:3307"
+	password = "password"
+	hostname = "127.0.0.1:3306"
 	dbname   = "graphql_test"
 )
 
@@ -26,7 +28,6 @@ type MySQLRepository struct {
 
 func NewMySQLRepository() domain.Repository {
 	db, err := sql.Open("mysql", dsn(""))
-
 	if err != nil {
 		log.Fatalf("Error %s when opening DB", err)
 	}
@@ -55,7 +56,6 @@ func (repo *MySQLRepository) createDB() error {
 
 func (repo *MySQLRepository) connectDB() error {
 	db, err := sql.Open("mysql", dsn(dbname))
-
 	if err != nil {
 		log.Fatalf("Error %s when opening DB", err)
 	}
@@ -66,15 +66,19 @@ func (repo *MySQLRepository) connectDB() error {
 }
 
 func (repo *MySQLRepository) runMigrations() {
-	driver, _ := mysql.WithInstance(repo.engine, &mysql.Config{})
-	m, _ := migrate.NewWithDatabaseInstance(
+	driver, err := mysql.WithInstance(repo.engine, &mysql.Config{})
+	if err != nil {
+		log.Fatalf("Error %s when creating migration driver", err)
+	}
+
+	m, err := migrate.NewWithDatabaseInstance(
 		"file://./pkg/library/shared/infra/adapters/mySQL/internal/migrations",
 		"mysql",
 		driver,
 	)
-
-	err := m.Up()
 	if err != nil {
-		fmt.Println("Error ", err, " when executing migrations")
+		log.Fatalf("Error %s when loading migrations", err)
 	}
+
+	err = m.Up()
 }

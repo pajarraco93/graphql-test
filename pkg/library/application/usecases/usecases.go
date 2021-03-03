@@ -22,18 +22,18 @@ func NewUseCases(repo domain.Repository) UseCasesInterface {
 	}
 }
 
-func (u *UseCases) CreateGroup(entities.Group) error {
-	return nil
+func (u *UseCases) CreateGroup(group entities.Group) error {
+	return u.repo.CreateGroup(group)
 }
 
-func (u *UseCases) CreateAlbum(entities.Album) error {
-	return nil
+func (u *UseCases) CreateAlbum(album entities.Album) error {
+	return u.repo.CreateAlbum(album)
 }
 
-func (u *UseCases) CreateSong(entities.Song) error {
-	return nil
+func (u *UseCases) CreateSong(song entities.Song) error {
+	return u.repo.CreateSong(song)
 }
 
 func (u *UseCases) AllGroups() ([]entities.Group, error) {
-	return []entities.Group{}, nil
+	return u.repo.AllGroups()
 }
