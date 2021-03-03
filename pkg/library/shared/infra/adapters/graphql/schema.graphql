@@ -1,0 +1,50 @@
+
+type Group {
+  id: ID!
+  name: String!
+  genre: String
+}
+
+type Album {
+  id: ID!
+  name: String!
+  composedBy: Group!
+  year: Int   
+}
+
+type Song {
+  id: ID!
+  name: String!
+  appearsIn: [Album!]
+}
+
+type Query {
+  allGroups: [Group]
+}
+
+input newGroup {
+  name: String!
+  genre: String
+}
+
+input newAlbum {
+  name: String!
+  composedBy: newGroup!
+  year: Int   
+}
+
+input newSong {
+  name: String!
+  appearsIn: [newAlbum!]
+}
+
+type Mutation {
+  createGroup(input: newGroup!): Group
+  createAlbum(input: newAlbum!): Album
+  createSong(input: newSong!): Song
+}
+
+schema {
+  query: Query
+  mutation: Mutation
+}
