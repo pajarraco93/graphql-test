@@ -3,9 +3,9 @@ package entities
 import "github.com/google/uuid"
 
 type Group struct {
-	ID    uuid.UUID
+	ID    int
 	Name  string
-	Genre GenreType
+	Genre string
 }
 
 type Album struct {

@@ -110,7 +110,7 @@ func (s Schema) Query() *graphql.Object {
 		Name: "Query",
 		Fields: graphql.Fields{
 			"AllGroups": &graphql.Field{
-				Type:        Group,
+				Type:        graphql.NewList(Group),
 				Description: "List all groups",
 				Resolve:     s.libraryResolver.AllGroups,
 			},
@@ -125,7 +125,7 @@ func (s Schema) Mutation() *graphql.Object {
 		Name: "Mutation",
 		Fields: graphql.Fields{
 			"CreateGroup": &graphql.Field{
-				Type:        graphql.String,
+				Type:        Group,
 				Description: "Create a new group",
 				Args: graphql.FieldConfigArgument{
 					"input": &graphql.ArgumentConfig{
@@ -135,24 +135,24 @@ func (s Schema) Mutation() *graphql.Object {
 				Resolve: s.libraryResolver.CreateGroup,
 			},
 			"CreateAlbum": &graphql.Field{
-				Type:        graphql.String,
+				Type:        Album,
 				Description: "Create a new album",
 				Args: graphql.FieldConfigArgument{
 					"input": &graphql.ArgumentConfig{
 						Type: NewAlbum,
 					},
 				},
-				Resolve: s.libraryResolver.CreateGroup,
+				Resolve: s.libraryResolver.CreateAlbum,
 			},
 			"CreateSong": &graphql.Field{
-				Type:        graphql.String,
+				Type:        Song,
 				Description: "Create a new song",
 				Args: graphql.FieldConfigArgument{
 					"input": &graphql.ArgumentConfig{
 						Type: NewSong,
 					},
 				},
-				Resolve: s.libraryResolver.CreateGroup,
+				Resolve: s.libraryResolver.CreateSong,
 			},
 		},
 	}
