@@ -1,7 +1,5 @@
 package entities
 
-import "github.com/google/uuid"
-
 type Group struct {
 	ID    int
 	Name  string
@@ -9,14 +7,14 @@ type Group struct {
 }
 
 type Album struct {
-	ID         uuid.UUID
+	ID         int
 	Name       string
 	ComposedBy Group
 	Year       int
 }
 
 type Song struct {
-	ID        uuid.UUID
+	ID        int
 	Name      string
 	AppearsIn Album
 }

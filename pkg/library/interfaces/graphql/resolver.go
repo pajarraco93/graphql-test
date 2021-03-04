@@ -27,7 +27,7 @@ func NewResolver(uc usecases.UseCasesInterface) Resolver {
 	}
 }
 
-func (r resolver) AllGroups(params graphql.ResolveParams) (interface{}, error) {
+func (r *resolver) AllGroups(params graphql.ResolveParams) (interface{}, error) {
 	log.Println("Listing all groups...")
 
 	groups, err := r.libraryService.AllGroups()
@@ -38,7 +38,7 @@ func (r resolver) AllGroups(params graphql.ResolveParams) (interface{}, error) {
 	return groups, nil
 }
 
-func (r resolver) CreateGroup(params graphql.ResolveParams) (interface{}, error) {
+func (r *resolver) CreateGroup(params graphql.ResolveParams) (interface{}, error) {
 	log.Println("Creating group...")
 
 	group := entities.Group{
@@ -62,10 +62,10 @@ func (r resolver) CreateGroup(params graphql.ResolveParams) (interface{}, error)
 	return group, nil
 }
 
-func (r resolver) CreateAlbum(params graphql.ResolveParams) (interface{}, error) {
+func (r *resolver) CreateAlbum(params graphql.ResolveParams) (interface{}, error) {
 	return nil, nil
 }
 
-func (r resolver) CreateSong(params graphql.ResolveParams) (interface{}, error) {
+func (r *resolver) CreateSong(params graphql.ResolveParams) (interface{}, error) {
 	return nil, nil
 }

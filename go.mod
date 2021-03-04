@@ -7,9 +7,10 @@ require (
 	github.com/agnivade/levenshtein v1.1.0 // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.0 // indirect
 	github.com/doug-martin/goqu/v9 v9.10.0 // indirect
+	github.com/foolin/echo-template v0.0.0-20190415034849-543a88245eec // indirect
 	github.com/go-sql-driver/mysql v1.5.0
 	github.com/golang-migrate/migrate v3.5.4+incompatible
-	github.com/google/uuid v1.2.0
+	github.com/google/uuid v1.2.0 // indirect
 	github.com/graphql-go/graphql v0.7.9
 	github.com/graphql-go/graphql-go-handler v0.2.3 // indirect
 	github.com/graphql-go/handler v0.2.3

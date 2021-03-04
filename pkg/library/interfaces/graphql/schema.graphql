@@ -18,10 +18,6 @@ type Song {
   appearsIn: Album!
 }
 
-type Query {
-  allGroups: [Group]
-}
-
 input newGroup {
   name: String!
   genre: String
@@ -36,6 +32,12 @@ input newAlbum {
 input newSong {
   name: String!
   appearsIn: newAlbum!
+}
+
+type Query {
+  allGroups: [Group]
+  getAlbumsBy(id: int!): [Album]
+  getSongsIn(id: int!): [Song]
 }
 
 type Mutation {

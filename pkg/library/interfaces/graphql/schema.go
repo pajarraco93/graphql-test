@@ -7,10 +7,10 @@ var Group = graphql.NewObject(
 		Name: "Group",
 		Fields: graphql.Fields{
 			"id": &graphql.Field{
-				Type: graphql.ID,
+				Type: graphql.NewNonNull(graphql.ID),
 			},
 			"name": &graphql.Field{
-				Type: graphql.String,
+				Type: graphql.NewNonNull(graphql.String),
 			},
 			"genre": &graphql.Field{
 				Type: graphql.String,
@@ -24,10 +24,10 @@ var Album = graphql.NewObject(
 		Name: "Album",
 		Fields: graphql.Fields{
 			"id": &graphql.Field{
-				Type: graphql.ID,
+				Type: graphql.NewNonNull(graphql.ID),
 			},
 			"name": &graphql.Field{
-				Type: graphql.String,
+				Type: graphql.NewNonNull(graphql.String),
 			},
 			"composedBy": &graphql.Field{
 				Type: Group,
@@ -61,7 +61,7 @@ var NewGroup = graphql.NewInputObject(
 		Name: "NewGroup",
 		Fields: graphql.InputObjectConfigFieldMap{
 			"name": &graphql.InputObjectFieldConfig{
-				Type: graphql.String,
+				Type: graphql.NewNonNull(graphql.String),
 			},
 			"genre": &graphql.InputObjectFieldConfig{
 				Type: graphql.String,
@@ -75,10 +75,10 @@ var NewAlbum = graphql.NewInputObject(
 		Name: "NewAlbum",
 		Fields: graphql.InputObjectConfigFieldMap{
 			"name": &graphql.InputObjectFieldConfig{
-				Type: graphql.String,
+				Type: graphql.NewNonNull(graphql.String),
 			},
 			"composedBy": &graphql.InputObjectFieldConfig{
-				Type: NewGroup,
+				Type: graphql.NewNonNull(NewGroup),
 			},
 			"year": &graphql.InputObjectFieldConfig{
 				Type: graphql.Int,
@@ -92,10 +92,10 @@ var NewSong = graphql.NewInputObject(
 		Name: "NewSong",
 		Fields: graphql.InputObjectConfigFieldMap{
 			"name": &graphql.InputObjectFieldConfig{
-				Type: graphql.String,
+				Type: graphql.NewNonNull(graphql.String),
 			},
 			"appearsIn": &graphql.InputObjectFieldConfig{
-				Type: NewAlbum,
+				Type: graphql.NewNonNull(NewAlbum),
 			},
 		},
 	},

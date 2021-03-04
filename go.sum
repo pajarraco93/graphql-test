@@ -24,6 +24,7 @@ github.com/doug-martin/goqu v1.0.0 h1:5qQwMzItVsRGYf/3GdAWhb1s0KE5YBaTq9phYI2JUG
 github.com/doug-martin/goqu v5.0.0+incompatible h1:C7O6xQYoWpSGX32C1faMJWe1s82Ktr2jjWf2joReiSQ=
 github.com/doug-martin/goqu/v9 v9.10.0 h1:ggTSAwshc5nubbFN7Q8Or1/Xzv+x8YTLCyv6CpBb9DM=
 github.com/doug-martin/goqu/v9 v9.10.0/go.mod h1:zx5/YoiHux3wn7477GnI3PXzKyKpLKu32Teo9U4yCFE=
+github.com/foolin/echo-template v0.0.0-20190415034849-543a88245eec/go.mod h1:4ePCtze3Ivy48ps0gJWfSByLgfqvT0rF+RpKQFe4Ja0=
 github.com/go-chi/chi v3.3.2+incompatible/go.mod h1:eB3wogJHnLi3x/kFX2A+IbTBlXxmMeXJVKy9tTv1XzQ=
 github.com/go-sql-driver/mysql v1.4.1/go.mod h1:zAC/RDZ24gD3HViQzih4MyKcchzm+sOG5ZlKdlhCg5w=
 github.com/go-sql-driver/mysql v1.5.0 h1:ozyZYNQW3x3HtqT1jira07DN2PArx2v7/mN66gGcHOs=
