@@ -2,27 +2,32 @@ package main
 
 import (
 	"log"
+	"net/http"
 
-	"github.com/pajarraco93/graphql-test/pkg/library/application/usecases"
-	"github.com/pajarraco93/graphql-test/pkg/library/interfaces/echo"
-	"github.com/pajarraco93/graphql-test/pkg/library/interfaces/graphql"
+	"github.com/99designs/gqlgen/graphql/handler"
+	"github.com/99designs/gqlgen/graphql/playground"
+
+	"github.com/pajarraco93/graphql-test/pkg/library/interfaces/graph"
+	"github.com/pajarraco93/graphql-test/pkg/library/interfaces/graph/generated"
 	"github.com/pajarraco93/graphql-test/pkg/library/shared/infra/adapters/mysql"
 )
 
 func main() {
 	repo := mysql.NewMySQLRepository()
 
-	uc := usecases.NewUseCases(repo)
-
-	graphQLHandler, err := graphql.NewGraphQL(uc)
-
-	echoServer, err := echo.NewEcho(
-		echo.WithPort(8080),
-		echo.WithGraphQLServer(graphQLHandler),
+	srv := handler.NewDefaultServer(
+		generated.NewExecutableSchema(
+			generated.Config{
+				Resolvers: &graph.Resolver{
+					GroupRepo: repo,
+				},
+			},
+		),
 	)
-	if err != nil {
-		log.Fatal("Error initializing echo server: ", err)
-	}
 
-	echoServer.Start()
+	http.Handle("/", playground.Handler("GraphQL playground", "/query"))
+	http.Handle("/query", srv)
+
+	log.Printf("connect to http://localhost:%s/ for GraphQL playground", ":8080")
+	log.Fatal(http.ListenAndServe(":8080", nil))
 }

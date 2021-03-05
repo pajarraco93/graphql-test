@@ -62,8 +62,28 @@ func (r *MySQLRepository) AllGroups() (groups []entities.Group, err error) {
 	return groups, nil
 }
 
-func (r *MySQLRepository) GetGroupByName(name string) (group entities.Group, err error) {
-	query := fmt.Sprintf(`SELECT * FROM Groups WHERE name = '%s'`, name)
+func (r *MySQLRepository) AllAlbums() (albums []entities.Album, err error) {
+	query := fmt.Sprintf(`SELECT * FROM Albums`)
+	rows, err := r.engine.Query(query)
+	if err != nil {
+		return nil, err
+	}
+
+	for rows.Next() {
+		var album entities.Album
+		err = rows.Scan(&album.ID, &album.Name, &album.Year, &album.ComposedBy.ID)
+		if err != nil {
+			return nil, err
+		}
+
+		albums = append(albums, album)
+	}
+
+	return albums, nil
+}
+
+func (r *MySQLRepository) GetGroupByID(ID int) (group entities.Group, err error) {
+	query := fmt.Sprintf(`SELECT * FROM Groups WHERE groupID = '%d'`, ID)
 	row := r.engine.QueryRow(query)
 
 	err = row.Scan(&group.ID, &group.Name, &group.Genre)
@@ -74,8 +94,8 @@ func (r *MySQLRepository) GetGroupByName(name string) (group entities.Group, err
 	return group, nil
 }
 
-func (r *MySQLRepository) GetAlbumByName(name string) (album entities.Album, err error) {
-	query := fmt.Sprintf(`SELECT * FROM Album WHERE name = '%s'`, name)
+func (r *MySQLRepository) GetAlbumByID(ID int) (album entities.Album, err error) {
+	query := fmt.Sprintf(`SELECT * FROM Album WHERE id = '%d'`, ID)
 	row := r.engine.QueryRow(query)
 
 	err = row.Scan(&album.ID, &album.Name, &album.Year, &album.ComposedBy.ID)

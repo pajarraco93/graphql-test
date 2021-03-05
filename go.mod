@@ -3,7 +3,7 @@ module github.com/pajarraco93/graphql-test
 go 1.15
 
 require (
-	github.com/99designs/gqlgen v0.13.0 // indirect
+	github.com/99designs/gqlgen v0.13.0
 	github.com/agnivade/levenshtein v1.1.0 // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.0 // indirect
 	github.com/doug-martin/goqu/v9 v9.10.0 // indirect
@@ -11,7 +11,7 @@ require (
 	github.com/go-sql-driver/mysql v1.5.0
 	github.com/golang-migrate/migrate v3.5.4+incompatible
 	github.com/google/uuid v1.2.0 // indirect
-	github.com/graphql-go/graphql v0.7.9
+	github.com/graphql-go/graphql v0.7.9 // indirect
 	github.com/graphql-go/graphql-go-handler v0.2.3 // indirect
 	github.com/graphql-go/handler v0.2.3
 	github.com/hashicorp/golang-lru v0.5.4 // indirect
@@ -22,7 +22,7 @@ require (
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
 	github.com/urfave/cli/v2 v2.3.0 // indirect
 	github.com/vektah/dataloaden v0.3.0 // indirect
-	github.com/vektah/gqlparser/v2 v2.1.0 // indirect
+	github.com/vektah/gqlparser/v2 v2.1.0
 	go.mongodb.org/mongo-driver v1.4.6 // indirect
 	golang.org/x/mod v0.4.1 // indirect
 	golang.org/x/sys v0.0.0-20210303074136-134d130e1a04 // indirect
