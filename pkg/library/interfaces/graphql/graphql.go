@@ -19,7 +19,7 @@ func NewGraphQL(uc usecases.UseCasesInterface) (*handler.Handler, error) {
 
 	graphQLHandler := handler.New(&handler.Config{
 		Schema:   &graphqlSchema,
-		GraphiQL: false,
+		GraphiQL: true,
 		Pretty:   true,
 	})
 

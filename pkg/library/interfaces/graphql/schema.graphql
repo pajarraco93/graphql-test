@@ -25,13 +25,13 @@ input newGroup {
 
 input newAlbum {
   name: String!
-  composedBy: newGroup!
+  composedBy: String!
   year: Int   
 }
 
 input newSong {
   name: String!
-  appearsIn: newAlbum!
+  appearsIn: String!
 }
 
 type Query {

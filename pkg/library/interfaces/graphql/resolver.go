@@ -41,10 +41,7 @@ func (r *resolver) AllGroups(params graphql.ResolveParams) (interface{}, error) 
 func (r *resolver) CreateGroup(params graphql.ResolveParams) (interface{}, error) {
 	log.Println("Creating group...")
 
-	group := entities.Group{
-		Name:  "",
-		Genre: "",
-	}
+	group := entities.Group{}
 
 	if name, ok := params.Args["input"].(map[string]interface{})["name"].(string); ok {
 		group.Name = name
@@ -63,7 +60,35 @@ func (r *resolver) CreateGroup(params graphql.ResolveParams) (interface{}, error
 }
 
 func (r *resolver) CreateAlbum(params graphql.ResolveParams) (interface{}, error) {
-	return nil, nil
+	log.Println("Creating album...")
+
+	album := entities.Album{}
+
+	if composedBy, ok := params.Args["input"].(map[string]interface{})["composedBy"].(string); ok {
+		album.ComposedBy.Name = composedBy
+	}
+
+	group, err := r.libraryService.GetGroupByName(album.ComposedBy.Name)
+	if err != nil {
+		return nil, err
+	}
+
+	if name, ok := params.Args["input"].(map[string]interface{})["name"].(string); ok {
+		album.Name = name
+	}
+
+	if year, ok := params.Args["input"].(map[string]interface{})["year"].(int); ok {
+		album.Year = year
+	}
+
+	album.ComposedBy = group
+
+	err = r.libraryService.CreateAlbum(album)
+	if err != nil {
+		return nil, err
+	}
+
+	return album, nil
 }
 
 func (r *resolver) CreateSong(params graphql.ResolveParams) (interface{}, error) {

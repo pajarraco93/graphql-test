@@ -6,5 +6,7 @@ type Repository interface {
 	CreateGroup(entities.Group) error
 	CreateAlbum(entities.Album) error
 	CreateSong(entities.Song) error
+
 	AllGroups() ([]entities.Group, error)
+	GetGroupByName(string) (entities.Group, error)
 }

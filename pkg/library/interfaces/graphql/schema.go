@@ -78,7 +78,7 @@ var NewAlbum = graphql.NewInputObject(
 				Type: graphql.NewNonNull(graphql.String),
 			},
 			"composedBy": &graphql.InputObjectFieldConfig{
-				Type: graphql.NewNonNull(NewGroup),
+				Type: graphql.NewNonNull(graphql.String),
 			},
 			"year": &graphql.InputObjectFieldConfig{
 				Type: graphql.Int,
@@ -95,7 +95,7 @@ var NewSong = graphql.NewInputObject(
 				Type: graphql.NewNonNull(graphql.String),
 			},
 			"appearsIn": &graphql.InputObjectFieldConfig{
-				Type: graphql.NewNonNull(NewAlbum),
+				Type: graphql.NewNonNull(graphql.String),
 			},
 		},
 	},

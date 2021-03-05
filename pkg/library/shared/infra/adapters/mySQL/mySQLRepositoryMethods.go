@@ -18,12 +18,28 @@ func (r *MySQLRepository) CreateGroup(group entities.Group) error {
 	return err
 }
 
-func (r *MySQLRepository) CreateAlbum(entities.Album) error {
-	return nil
+func (r *MySQLRepository) CreateAlbum(album entities.Album) error {
+	query := fmt.Sprintf(`
+		INSERT INTO 
+			Albums (name, year, composedBy)
+		VALUES 
+			('%s', '%d', '%d')`,
+		album.Name, album.Year, album.ComposedBy.ID,
+	)
+	_, err := r.engine.Query(query)
+	return err
 }
 
-func (r *MySQLRepository) CreateSong(entities.Song) error {
-	return nil
+func (r *MySQLRepository) CreateSong(song entities.Song) error {
+	query := fmt.Sprintf(`
+		INSERT INTO 
+			Songs (name, year, appearsIn)
+		VALUES 
+			('%s', '%d', '%d')`,
+		song.Name, song.AppearsIn.ID,
+	)
+	_, err := r.engine.Query(query)
+	return err
 }
 
 func (r *MySQLRepository) AllGroups() (groups []entities.Group, err error) {
@@ -44,4 +60,28 @@ func (r *MySQLRepository) AllGroups() (groups []entities.Group, err error) {
 	}
 
 	return groups, nil
+}
+
+func (r *MySQLRepository) GetGroupByName(name string) (group entities.Group, err error) {
+	query := fmt.Sprintf(`SELECT * FROM Groups WHERE name = '%s'`, name)
+	row := r.engine.QueryRow(query)
+
+	err = row.Scan(&group.ID, &group.Name, &group.Genre)
+	if err != nil {
+		return group, err
+	}
+
+	return group, nil
+}
+
+func (r *MySQLRepository) GetAlbumByName(name string) (album entities.Album, err error) {
+	query := fmt.Sprintf(`SELECT * FROM Album WHERE name = '%s'`, name)
+	row := r.engine.QueryRow(query)
+
+	err = row.Scan(&album.ID, &album.Name, &album.Year, &album.ComposedBy.ID)
+	if err != nil {
+		return album, err
+	}
+
+	return album, nil
 }
