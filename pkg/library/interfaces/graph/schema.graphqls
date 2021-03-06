@@ -1,19 +1,23 @@
-
 type Group {
-  id: ID!
+  id: Int!
   name: String!
   genre: String
+  groupInfo: GroupInfo
+}
+
+type GroupInfo{
+  info: String
 }
 
 type Album {
-  id: ID!
+  id: Int!
   name: String!
   composedBy: Group!
   year: Int   
 }
 
 type Song {
-  id: ID!
+  id: Int!
   name: String!
   appearsIn: Album!
 }
@@ -36,8 +40,8 @@ input newSong {
 
 type Query {
   allGroups: [Group]
-  getAlbumsBy(id: int!): [Album]
-  getSongsIn(id: int!): [Song]
+  allAlbums: [Album]
+  allSongs: [Song]
 }
 
 type Mutation {

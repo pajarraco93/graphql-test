@@ -33,9 +33,9 @@ func (r *MySQLRepository) CreateAlbum(album entities.Album) error {
 func (r *MySQLRepository) CreateSong(song entities.Song) error {
 	query := fmt.Sprintf(`
 		INSERT INTO 
-			Songs (name, year, appearsIn)
+			Songs (name, appearsIn)
 		VALUES 
-			('%s', '%d', '%d')`,
+			('%s', '%d')`,
 		song.Name, song.AppearsIn.ID,
 	)
 	_, err := r.engine.Query(query)
@@ -62,8 +62,48 @@ func (r *MySQLRepository) AllGroups() (groups []entities.Group, err error) {
 	return groups, nil
 }
 
-func (r *MySQLRepository) GetGroupByName(name string) (group entities.Group, err error) {
-	query := fmt.Sprintf(`SELECT * FROM Groups WHERE name = '%s'`, name)
+func (r *MySQLRepository) AllAlbums() (albums []entities.Album, err error) {
+	query := fmt.Sprintf(`SELECT * FROM Albums`)
+	rows, err := r.engine.Query(query)
+	if err != nil {
+		return nil, err
+	}
+
+	for rows.Next() {
+		var album entities.Album
+		err = rows.Scan(&album.ID, &album.Name, &album.Year, &album.ComposedBy.ID)
+		if err != nil {
+			return nil, err
+		}
+
+		albums = append(albums, album)
+	}
+
+	return albums, nil
+}
+
+func (r *MySQLRepository) AllSongs() (songs []entities.Song, err error) {
+	query := fmt.Sprintf(`SELECT * FROM Songs`)
+	rows, err := r.engine.Query(query)
+	if err != nil {
+		return nil, err
+	}
+
+	for rows.Next() {
+		var song entities.Song
+		err = rows.Scan(&song.ID, &song.Name, &song.AppearsIn.ID)
+		if err != nil {
+			return nil, err
+		}
+
+		songs = append(songs, song)
+	}
+
+	return songs, nil
+}
+
+func (r *MySQLRepository) GetGroupByID(ID int) (group entities.Group, err error) {
+	query := fmt.Sprintf(`SELECT * FROM Groups WHERE groupID = '%d'`, ID)
 	row := r.engine.QueryRow(query)
 
 	err = row.Scan(&group.ID, &group.Name, &group.Genre)
@@ -74,8 +114,8 @@ func (r *MySQLRepository) GetGroupByName(name string) (group entities.Group, err
 	return group, nil
 }
 
-func (r *MySQLRepository) GetAlbumByName(name string) (album entities.Album, err error) {
-	query := fmt.Sprintf(`SELECT * FROM Album WHERE name = '%s'`, name)
+func (r *MySQLRepository) GetAlbumByID(ID int) (album entities.Album, err error) {
+	query := fmt.Sprintf(`SELECT * FROM Albums WHERE albumId = '%d'`, ID)
 	row := r.engine.QueryRow(query)
 
 	err = row.Scan(&album.ID, &album.Name, &album.Year, &album.ComposedBy.ID)

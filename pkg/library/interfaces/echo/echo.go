@@ -3,14 +3,14 @@ package echo
 import (
 	"fmt"
 
-	"github.com/graphql-go/handler"
+	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/labstack/echo"
 )
 
 type EchoServer struct {
 	e              *echo.Echo
 	port           int
-	graphQLHandler *handler.Handler
+	graphQLHandler *handler.Server
 }
 
 func NewEcho(opts ...EchoOptions) (*EchoServer, error) {

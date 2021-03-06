@@ -2,27 +2,44 @@ package main
 
 import (
 	"log"
+	"net/http"
+	"os"
 
-	"github.com/pajarraco93/graphql-test/pkg/library/application/usecases"
-	"github.com/pajarraco93/graphql-test/pkg/library/interfaces/echo"
-	"github.com/pajarraco93/graphql-test/pkg/library/interfaces/graphql"
+	"github.com/99designs/gqlgen/graphql/handler"
+	"github.com/99designs/gqlgen/graphql/playground"
+	"github.com/joho/godotenv"
+
+	"github.com/pajarraco93/graphql-test/pkg/library/interfaces/graph"
+	"github.com/pajarraco93/graphql-test/pkg/library/interfaces/graph/generated"
+	"github.com/pajarraco93/graphql-test/pkg/library/shared/infra/adapters/lastfm"
 	"github.com/pajarraco93/graphql-test/pkg/library/shared/infra/adapters/mysql"
 )
 
 func main() {
-	repo := mysql.NewMySQLRepository()
-
-	uc := usecases.NewUseCases(repo)
-
-	graphQLHandler, err := graphql.NewGraphQL(uc)
-
-	echoServer, err := echo.NewEcho(
-		echo.WithPort(8080),
-		echo.WithGraphQLServer(graphQLHandler),
-	)
+	err := godotenv.Load("./dev.env")
 	if err != nil {
-		log.Fatal("Error initializing echo server: ", err)
+		log.Fatalf("Error loading .env file")
 	}
 
-	echoServer.Start()
+	repo := mysql.NewMySQLRepository()
+	lfm := lastfm.NewLastFMAPI(
+		os.Getenv("APIKEY"),
+	)
+
+	srv := handler.NewDefaultServer(
+		generated.NewExecutableSchema(
+			generated.Config{
+				Resolvers: &graph.Resolver{
+					Repo:   repo,
+					LastFM: lfm,
+				},
+			},
+		),
+	)
+
+	http.Handle("/", playground.Handler("GraphQL playground", "/query"))
+	http.Handle("/query", srv)
+
+	log.Printf("connect to http://localhost:%s/ for GraphQL playground", ":8080")
+	log.Fatal(http.ListenAndServe(":8080", nil))
 }

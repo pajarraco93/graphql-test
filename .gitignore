@@ -2,3 +2,4 @@ vendor/
 graphql_test_db/
 
 .DS_Store
+*.env
