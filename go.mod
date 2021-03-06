@@ -13,8 +13,9 @@ require (
 	github.com/google/uuid v1.2.0 // indirect
 	github.com/graphql-go/graphql v0.7.9 // indirect
 	github.com/graphql-go/graphql-go-handler v0.2.3 // indirect
-	github.com/graphql-go/handler v0.2.3
+	github.com/graphql-go/handler v0.2.3 // indirect
 	github.com/hashicorp/golang-lru v0.5.4 // indirect
+	github.com/joho/godotenv v1.3.0
 	github.com/labstack/echo v3.3.10+incompatible
 	github.com/labstack/gommon v0.3.0 // indirect
 	github.com/matryer/moq v0.2.1 // indirect

@@ -2,16 +2,8 @@
 
 package model
 
-type Group struct {
-	ID    int     `json:"id"`
-	Name  string  `json:"name"`
-	Genre *string `json:"genre"`
-}
-
-type Song struct {
-	ID        int    `json:"id"`
-	Name      string `json:"name"`
-	AppearsIn *Album `json:"appearsIn"`
+type GroupInfo struct {
+	Info *string `json:"info"`
 }
 
 type NewAlbum struct {

@@ -3,23 +3,35 @@ package main
 import (
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
+	"github.com/joho/godotenv"
 
 	"github.com/pajarraco93/graphql-test/pkg/library/interfaces/graph"
 	"github.com/pajarraco93/graphql-test/pkg/library/interfaces/graph/generated"
+	"github.com/pajarraco93/graphql-test/pkg/library/shared/infra/adapters/lastfm"
 	"github.com/pajarraco93/graphql-test/pkg/library/shared/infra/adapters/mysql"
 )
 
 func main() {
+	err := godotenv.Load("./dev.env")
+	if err != nil {
+		log.Fatalf("Error loading .env file")
+	}
+
 	repo := mysql.NewMySQLRepository()
+	lfm := lastfm.NewLastFMAPI(
+		os.Getenv("APIKEY"),
+	)
 
 	srv := handler.NewDefaultServer(
 		generated.NewExecutableSchema(
 			generated.Config{
 				Resolvers: &graph.Resolver{
-					GroupRepo: repo,
+					Repo:   repo,
+					LastFM: lfm,
 				},
 			},
 		),

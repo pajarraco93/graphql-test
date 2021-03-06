@@ -36,8 +36,10 @@ type Config struct {
 
 type ResolverRoot interface {
 	Album() AlbumResolver
+	Group() GroupResolver
 	Mutation() MutationResolver
 	Query() QueryResolver
+	Song() SongResolver
 }
 
 type DirectiveRoot struct {
@@ -52,9 +54,14 @@ type ComplexityRoot struct {
 	}
 
 	Group struct {
-		Genre func(childComplexity int) int
-		ID    func(childComplexity int) int
-		Name  func(childComplexity int) int
+		Genre     func(childComplexity int) int
+		GroupInfo func(childComplexity int) int
+		ID        func(childComplexity int) int
+		Name      func(childComplexity int) int
+	}
+
+	GroupInfo struct {
+		Info func(childComplexity int) int
 	}
 
 	Mutation struct {
@@ -79,6 +86,9 @@ type ComplexityRoot struct {
 type AlbumResolver interface {
 	ComposedBy(ctx context.Context, obj *model.Album) (*model.Group, error)
 }
+type GroupResolver interface {
+	GroupInfo(ctx context.Context, obj *model.Group) (*model.GroupInfo, error)
+}
 type MutationResolver interface {
 	CreateGroup(ctx context.Context, input model.NewGroup) (*model.Group, error)
 	CreateAlbum(ctx context.Context, input model.NewAlbum) (*model.Album, error)
@@ -88,6 +98,9 @@ type QueryResolver interface {
 	AllGroups(ctx context.Context) ([]*model.Group, error)
 	AllAlbums(ctx context.Context) ([]*model.Album, error)
 	AllSongs(ctx context.Context) ([]*model.Song, error)
+}
+type SongResolver interface {
+	AppearsIn(ctx context.Context, obj *model.Song) (*model.Album, error)
 }
 
 type executableSchema struct {
@@ -140,6 +153,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Group.Genre(childComplexity), true
 
+	case "Group.groupInfo":
+		if e.complexity.Group.GroupInfo == nil {
+			break
+		}
+
+		return e.complexity.Group.GroupInfo(childComplexity), true
+
 	case "Group.id":
 		if e.complexity.Group.ID == nil {
 			break
@@ -153,6 +173,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Group.Name(childComplexity), true
+
+	case "GroupInfo.info":
+		if e.complexity.GroupInfo.Info == nil {
+			break
+		}
+
+		return e.complexity.GroupInfo.Info(childComplexity), true
 
 	case "Mutation.createAlbum":
 		if e.complexity.Mutation.CreateAlbum == nil {
@@ -300,6 +327,11 @@ var sources = []*ast.Source{
   id: Int!
   name: String!
   genre: String
+  groupInfo: GroupInfo
+}
+
+type GroupInfo{
+  info: String
 }
 
 type Album {
@@ -691,6 +723,70 @@ func (ec *executionContext) _Group_genre(ctx context.Context, field graphql.Coll
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Group_groupInfo(ctx context.Context, field graphql.CollectedField, obj *model.Group) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Group",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Group().GroupInfo(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.GroupInfo)
+	fc.Result = res
+	return ec.marshalOGroupInfo2ᚖgithubᚗcomᚋpajarraco93ᚋgraphqlᚑtestᚋpkgᚋlibraryᚋinterfacesᚋgraphᚋmodelᚐGroupInfo(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _GroupInfo_info(ctx context.Context, field graphql.CollectedField, obj *model.GroupInfo) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "GroupInfo",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Info, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Mutation_createGroup(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -1056,14 +1152,14 @@ func (ec *executionContext) _Song_appearsIn(ctx context.Context, field graphql.C
 		Object:     "Song",
 		Field:      field,
 		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
+		IsMethod:   true,
+		IsResolver: true,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.AppearsIn, nil
+		return ec.resolvers.Song().AppearsIn(rctx, obj)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -2329,15 +2425,50 @@ func (ec *executionContext) _Group(ctx context.Context, sel ast.SelectionSet, ob
 		case "id":
 			out.Values[i] = ec._Group_id(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "name":
 			out.Values[i] = ec._Group_name(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "genre":
 			out.Values[i] = ec._Group_genre(ctx, field, obj)
+		case "groupInfo":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Group_groupInfo(ctx, field, obj)
+				return res
+			})
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var groupInfoImplementors = []string{"GroupInfo"}
+
+func (ec *executionContext) _GroupInfo(ctx context.Context, sel ast.SelectionSet, obj *model.GroupInfo) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, groupInfoImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("GroupInfo")
+		case "info":
+			out.Values[i] = ec._GroupInfo_info(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -2458,18 +2589,27 @@ func (ec *executionContext) _Song(ctx context.Context, sel ast.SelectionSet, obj
 		case "id":
 			out.Values[i] = ec._Song_id(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "name":
 			out.Values[i] = ec._Song_name(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				invalids++
+				atomic.AddUint32(&invalids, 1)
 			}
 		case "appearsIn":
-			out.Values[i] = ec._Song_appearsIn(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Song_appearsIn(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -2725,6 +2865,10 @@ func (ec *executionContext) ___Type(ctx context.Context, sel ast.SelectionSet, o
 // endregion **************************** object.gotpl ****************************
 
 // region    ***************************** type.gotpl *****************************
+
+func (ec *executionContext) marshalNAlbum2githubᚗcomᚋpajarraco93ᚋgraphqlᚑtestᚋpkgᚋlibraryᚋinterfacesᚋgraphᚋmodelᚐAlbum(ctx context.Context, sel ast.SelectionSet, v model.Album) graphql.Marshaler {
+	return ec._Album(ctx, sel, &v)
+}
 
 func (ec *executionContext) marshalNAlbum2ᚖgithubᚗcomᚋpajarraco93ᚋgraphqlᚑtestᚋpkgᚋlibraryᚋinterfacesᚋgraphᚋmodelᚐAlbum(ctx context.Context, sel ast.SelectionSet, v *model.Album) graphql.Marshaler {
 	if v == nil {
@@ -3155,6 +3299,13 @@ func (ec *executionContext) marshalOGroup2ᚖgithubᚗcomᚋpajarraco93ᚋgraphq
 		return graphql.Null
 	}
 	return ec._Group(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOGroupInfo2ᚖgithubᚗcomᚋpajarraco93ᚋgraphqlᚑtestᚋpkgᚋlibraryᚋinterfacesᚋgraphᚋmodelᚐGroupInfo(ctx context.Context, sel ast.SelectionSet, v *model.GroupInfo) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._GroupInfo(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalOInt2ᚖint(ctx context.Context, v interface{}) (*int, error) {

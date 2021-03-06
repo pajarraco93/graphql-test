@@ -2,6 +2,11 @@ type Group {
   id: Int!
   name: String!
   genre: String
+  groupInfo: GroupInfo
+}
+
+type GroupInfo{
+  info: String
 }
 
 type Album {
