@@ -4,9 +4,11 @@ package graph
 
 import (
 	"github.com/pajarraco93/graphql-test/pkg/library/domain"
+	"github.com/pajarraco93/graphql-test/pkg/library/interfaces/graph/middleware/dataloader"
 )
 
 type Resolver struct {
-	Repo   domain.Repository
-	LastFM domain.InfoRepo
+	Repo        domain.Repository
+	LastFM      domain.InfoRepo
+	DataLoaders dataloader.Retriever
 }

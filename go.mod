@@ -20,7 +20,10 @@ require (
 	github.com/labstack/gommon v0.3.0 // indirect
 	github.com/matryer/moq v0.2.1 // indirect
 	github.com/mitchellh/mapstructure v1.4.1 // indirect
+	github.com/rs/zerolog v1.20.0
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
+	github.com/simukti/sqldb-logger v0.0.0-20201125162808-c35f87e285f2
+	github.com/simukti/sqldb-logger/logadapter/zerologadapter v0.0.0-20201125162808-c35f87e285f2
 	github.com/urfave/cli/v2 v2.3.0 // indirect
 	github.com/vektah/dataloaden v0.3.0 // indirect
 	github.com/vektah/gqlparser/v2 v2.1.0
