@@ -11,7 +11,7 @@ type Repository interface {
 	AllAlbums() ([]entities.Album, error)
 	AllSongs() ([]entities.Song, error)
 
-	GetGroupByID(int) (entities.Group, error)
+	GetGroupsByIDs([]int) ([]entities.Group, error)
 	GetAlbumByID(int) (entities.Album, error)
 }
 

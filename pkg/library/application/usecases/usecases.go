@@ -15,7 +15,7 @@ type UseCasesInterface interface {
 	CreateSong(entities.Song) error
 
 	AllGroups() ([]entities.Group, error)
-	GetGroupByID(int) (entities.Group, error)
+	GetGroupsByIDs([]int) ([]entities.Group, error)
 	GetAlbumByID(int) (entities.Album, error)
 }
 
@@ -41,8 +41,8 @@ func (u *UseCases) AllGroups() ([]entities.Group, error) {
 	return u.repo.AllGroups()
 }
 
-func (u *UseCases) GetGroupByID(ID int) (entities.Group, error) {
-	return u.repo.GetGroupByID(ID)
+func (u *UseCases) GetGroupsByIDs(ID []int) ([]entities.Group, error) {
+	return u.repo.GetGroupsByIDs(ID)
 }
 
 func (u *UseCases) GetAlbumByID(ID int) (entities.Album, error) {

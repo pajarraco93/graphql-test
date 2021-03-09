@@ -11,6 +11,7 @@ import (
 
 	"github.com/pajarraco93/graphql-test/pkg/library/interfaces/graph"
 	"github.com/pajarraco93/graphql-test/pkg/library/interfaces/graph/generated"
+	"github.com/pajarraco93/graphql-test/pkg/library/interfaces/graph/middleware/dataloader"
 	"github.com/pajarraco93/graphql-test/pkg/library/shared/infra/adapters/lastfm"
 	"github.com/pajarraco93/graphql-test/pkg/library/shared/infra/adapters/mysql"
 )
@@ -26,19 +27,23 @@ func main() {
 		os.Getenv("APIKEY"),
 	)
 
+	dl := dataloader.NewRetriever()
+	dlMiddleware := dataloader.Middleware(repo)
+
 	srv := handler.NewDefaultServer(
 		generated.NewExecutableSchema(
 			generated.Config{
 				Resolvers: &graph.Resolver{
-					Repo:   repo,
-					LastFM: lfm,
+					Repo:        repo,
+					LastFM:      lfm,
+					DataLoaders: dl,
 				},
 			},
 		),
 	)
 
 	http.Handle("/", playground.Handler("GraphQL playground", "/query"))
-	http.Handle("/query", srv)
+	http.Handle("/query", dlMiddleware(srv))
 
 	log.Printf("connect to http://localhost:%s/ for GraphQL playground", ":8080")
 	log.Fatal(http.ListenAndServe(":8080", nil))

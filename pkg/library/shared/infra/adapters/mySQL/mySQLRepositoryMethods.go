@@ -2,6 +2,8 @@ package mysql
 
 import (
 	"fmt"
+	"strconv"
+	"strings"
 
 	"github.com/pajarraco93/graphql-test/pkg/library/domain/entities"
 )
@@ -102,16 +104,29 @@ func (r *MySQLRepository) AllSongs() (songs []entities.Song, err error) {
 	return songs, nil
 }
 
-func (r *MySQLRepository) GetGroupByID(ID int) (group entities.Group, err error) {
-	query := fmt.Sprintf(`SELECT * FROM Groups WHERE groupID = '%d'`, ID)
-	row := r.engine.QueryRow(query)
-
-	err = row.Scan(&group.ID, &group.Name, &group.Genre)
-	if err != nil {
-		return group, err
+func (r *MySQLRepository) GetGroupsByIDs(IDs []int) (groups []entities.Group, err error) {
+	var stringIDs []string
+	for _, i := range IDs {
+		stringIDs = append(stringIDs, strconv.Itoa(i))
 	}
 
-	return group, nil
+	query := fmt.Sprintf(`SELECT * FROM Groups WHERE groupID IN (%s)`, strings.Join(stringIDs, ","))
+	rows, err := r.engine.Query(query)
+	if err != nil {
+		return nil, err
+	}
+
+	for rows.Next() {
+		var group entities.Group
+		err = rows.Scan(&group.ID, &group.Name, &group.Genre)
+		if err != nil {
+			return nil, err
+		}
+
+		groups = append(groups, group)
+	}
+
+	return groups, nil
 }
 
 func (r *MySQLRepository) GetAlbumByID(ID int) (album entities.Album, err error) {
