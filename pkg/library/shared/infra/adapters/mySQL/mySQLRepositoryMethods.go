@@ -129,14 +129,67 @@ func (r *MySQLRepository) GetGroupsByIDs(IDs []int) (groups []entities.Group, er
 	return groups, nil
 }
 
-func (r *MySQLRepository) GetAlbumByID(ID int) (album entities.Album, err error) {
-	query := fmt.Sprintf(`SELECT * FROM Albums WHERE albumId = '%d'`, ID)
-	row := r.engine.QueryRow(query)
-
-	err = row.Scan(&album.ID, &album.Name, &album.Year, &album.ComposedBy.ID)
-	if err != nil {
-		return album, err
+func (r *MySQLRepository) GetAlbumsByIDs(IDs []int) (albums []entities.Album, err error) {
+	var stringIDs []string
+	for _, i := range IDs {
+		stringIDs = append(stringIDs, strconv.Itoa(i))
 	}
 
-	return album, nil
+	query := fmt.Sprintf(`SELECT * FROM Albums WHERE albumID IN (%s)`, strings.Join(stringIDs, ","))
+	rows, err := r.engine.Query(query)
+	if err != nil {
+		return nil, err
+	}
+
+	for rows.Next() {
+		var album entities.Album
+		err = rows.Scan(&album.ID, &album.Name, &album.Year, &album.ComposedBy.ID)
+		if err != nil {
+			return nil, err
+		}
+
+		albums = append(albums, album)
+	}
+
+	return albums, nil
+}
+
+func (r *MySQLRepository) GetAlbumsByGroupID(ID int) (albums []entities.Album, err error) {
+	query := fmt.Sprintf(`SELECT * FROM Albums WHERE composedBy = '%d'`, ID)
+	rows, err := r.engine.Query(query)
+	if err != nil {
+		return nil, err
+	}
+
+	for rows.Next() {
+		var album entities.Album
+		err = rows.Scan(&album.ID, &album.Name, &album.Year, &album.ComposedBy.ID)
+		if err != nil {
+			return nil, err
+		}
+
+		albums = append(albums, album)
+	}
+
+	return albums, nil
+}
+
+func (r *MySQLRepository) GetSongsByAlbumID(ID int) (songs []entities.Song, err error) {
+	query := fmt.Sprintf(`SELECT * FROM Songs where appearsIn = '%d'`, ID)
+	rows, err := r.engine.Query(query)
+	if err != nil {
+		return nil, err
+	}
+
+	for rows.Next() {
+		var song entities.Song
+		err = rows.Scan(&song.ID, &song.Name, &song.AppearsIn.ID)
+		if err != nil {
+			return nil, err
+		}
+
+		songs = append(songs, song)
+	}
+
+	return songs, nil
 }

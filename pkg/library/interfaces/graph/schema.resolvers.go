@@ -17,6 +17,24 @@ func (r *albumResolver) ComposedBy(ctx context.Context, obj *model.Album) (*mode
 	return r.DataLoaders.Retrieve(ctx).GetGroupByID.Load(obj.ComposedBy)
 }
 
+func (r *albumResolver) Songs(ctx context.Context, obj *model.Album) ([]*model.Song, error) {
+	songs, err := r.Repo.GetSongsByAlbumID(obj.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	var gqlSongs []*model.Song
+	for _, song := range songs {
+		gqlSongs = append(gqlSongs, &model.Song{
+			ID:        song.ID,
+			Name:      song.Name,
+			AppearsIn: song.AppearsIn.ID,
+		})
+	}
+
+	return gqlSongs, nil
+}
+
 func (r *groupResolver) GroupInfo(ctx context.Context, obj *model.Group) (*model.GroupInfo, error) {
 	info, err := r.LastFM.GetGroupInfo(entities.Group{
 		Name: obj.Name,
@@ -36,6 +54,26 @@ func (r *groupResolver) GroupInfo(ctx context.Context, obj *model.Group) (*model
 	return &model.GroupInfo{
 		Info: &info,
 	}, nil
+}
+
+func (r *groupResolver) Albums(ctx context.Context, obj *model.Group) ([]*model.Album, error) {
+	albums, err := r.Repo.GetAlbumsByGroupID(obj.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	var gqlAlbums []*model.Album
+	for _, album := range albums {
+		gqlAlbums = append(gqlAlbums, &model.Album{
+			ID:         album.ID,
+			Name:       album.Name,
+			ComposedBy: album.ComposedBy.ID,
+			Year:       &album.Year,
+		})
+	}
+
+	return gqlAlbums, nil
+
 }
 
 func (r *mutationResolver) CreateGroup(ctx context.Context, input model.NewGroup) (*model.Group, error) {
@@ -106,19 +144,7 @@ func (r *queryResolver) AllSongs(ctx context.Context) ([]*model.Song, error) {
 }
 
 func (r *songResolver) AppearsIn(ctx context.Context, obj *model.Song) (*model.Album, error) {
-	album, err := r.Repo.GetAlbumByID(obj.AppearsIn)
-	if err != nil {
-		return nil, err
-	}
-
-	gqlAlbum := &model.Album{
-		ID:         album.ID,
-		Name:       album.Name,
-		ComposedBy: album.ComposedBy.ID,
-		Year:       &album.Year,
-	}
-
-	return gqlAlbum, nil
+	return r.DataLoaders.Retrieve(ctx).GetAlbumByID.Load(obj.AppearsIn)
 }
 
 // Album returns generated.AlbumResolver implementation.

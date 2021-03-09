@@ -12,7 +12,10 @@ type Repository interface {
 	AllSongs() ([]entities.Song, error)
 
 	GetGroupsByIDs([]int) ([]entities.Group, error)
-	GetAlbumByID(int) (entities.Album, error)
+	GetAlbumsByIDs([]int) ([]entities.Album, error)
+
+	GetAlbumsByGroupID(int) ([]entities.Album, error)
+	GetSongsByAlbumID(int) ([]entities.Song, error)
 }
 
 type InfoRepo interface {
