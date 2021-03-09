@@ -9,7 +9,6 @@ import (
 	graph "github.com/pajarraco93/graphql-test/pkg/library/interfaces/graph/model"
 )
 
-// Retriever retrieves dataloaders from the request context.
 type Retriever interface {
 	Retrieve(context.Context) *Loaders
 }
@@ -22,7 +21,6 @@ func (r *retriever) Retrieve(ctx context.Context) *Loaders {
 	return ctx.Value(r.key).(*Loaders)
 }
 
-// NewRetriever instantiates a new implementation of Retriever.
 func NewRetriever() Retriever {
 	return &retriever{key: key}
 }

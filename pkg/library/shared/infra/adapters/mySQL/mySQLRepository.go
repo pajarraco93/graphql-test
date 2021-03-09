@@ -10,10 +10,10 @@ import (
 	"github.com/golang-migrate/migrate"
 	"github.com/golang-migrate/migrate/database/mysql"
 	_ "github.com/golang-migrate/migrate/source/file"
+	"github.com/rs/zerolog"
 	sqldblogger "github.com/simukti/sqldb-logger"
 	"github.com/simukti/sqldb-logger/logadapter/zerologadapter"
-	"github.com/rs/zerolog"
-	
+
 	"github.com/pajarraco93/graphql-test/pkg/library/domain"
 )
 
@@ -59,13 +59,13 @@ func (repo *MySQLRepository) createDB() error {
 }
 
 func (repo *MySQLRepository) connectDB() error {
-	//db, err := sql.Open("mysql", dsn(dbname))
 	loggerAdapter := zerologadapter.New(zerolog.New(os.Stdout))
-	db := sqldblogger.OpenDriver(dsn(dbname), repo.engine.Driver(), loggerAdapter) 
-	// if err != nil {
-	// 	log.Fatalf("Error %s when opening DB", err)
-	// }
-
+	db := sqldblogger.OpenDriver(
+		dsn(dbname),
+		repo.engine.Driver(),
+		loggerAdapter,
+		sqldblogger.WithMinimumLevel(sqldblogger.LevelInfo),
+	)
 	repo.engine = db
 
 	return nil

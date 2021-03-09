@@ -14,18 +14,6 @@ import (
 )
 
 func (r *albumResolver) ComposedBy(ctx context.Context, obj *model.Album) (*model.Group, error) {
-	// group, err := r.Repo.GetGroupByID(obj.ComposedBy)
-	// if err != nil {
-	// 	return nil, err
-	// }
-
-	// gqlGroup := &model.Group{
-	// 	ID:    group.ID,
-	// 	Name:  group.Name,
-	// 	Genre: &group.Genre,
-	// }
-
-	// return gqlGroup, nil
 	return r.DataLoaders.Retrieve(ctx).GetGroupByID.Load(obj.ComposedBy)
 }
 
