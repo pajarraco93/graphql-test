@@ -7,6 +7,7 @@ import (
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
+	"github.com/fatih/color"
 	"github.com/joho/godotenv"
 
 	"github.com/pajarraco93/graphql-test/pkg/library/interfaces/graph"
@@ -45,6 +46,6 @@ func main() {
 	http.Handle("/", playground.Handler("GraphQL playground", "/query"))
 	http.Handle("/query", dlMiddleware(srv))
 
-	log.Printf("connect to http://localhost:%s/ for GraphQL playground", ":8080")
+	color.Green("connect to http://localhost:%s/ for GraphQL playground", ":8080")
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
