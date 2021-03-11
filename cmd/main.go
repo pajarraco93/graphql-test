@@ -26,6 +26,7 @@ func main() {
 	repo := mysql.NewMySQLRepository()
 	lfm := lastfm.NewLastFMAPI(
 		os.Getenv("APIKEY"),
+		"http://ws.audioscrobbler.com/2.0/",
 	)
 
 	dl := dataloader.NewRetriever()

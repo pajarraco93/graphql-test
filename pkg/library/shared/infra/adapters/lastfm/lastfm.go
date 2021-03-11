@@ -1,13 +1,12 @@
 package lastfm
 
 import (
+	"fmt"
 	"io/ioutil"
 	"net/http"
 
 	"github.com/pajarraco93/graphql-test/pkg/library/domain/entities"
 )
-
-var USER_AGENT = "Dataquest"
 
 type searchParams map[string]string
 
@@ -16,10 +15,16 @@ type lastFMAPI struct {
 	url string
 }
 
-func NewLastFMAPI(apiKey string) *lastFMAPI {
+const UserAgent = "Dataquest"
+
+func ErrUnexpectedStatusCode(status string) error {
+	return fmt.Errorf("lastFM: unexpected response %s", status)
+}
+
+func NewLastFMAPI(apiKey, url string) *lastFMAPI {
 	return &lastFMAPI{
 		key: apiKey,
-		url: "http://ws.audioscrobbler.com/2.0/",
+		url: url,
 	}
 }
 
@@ -40,13 +45,17 @@ func (api *lastFMAPI) getCall(method string, extraParams searchParams) (string, 
 
 	req.URL.RawQuery = q.Encode()
 
-	req.Header.Set("user-agent", USER_AGENT)
+	req.Header.Set("user-agent", UserAgent)
 	req.Header.Set("Content-Type", "application/json")
 
 	client := &http.Client{}
 	res, err := client.Do(req)
 	if err != nil {
 		return "", err
+	}
+
+	if res.StatusCode >= http.StatusBadRequest {
+		return "", ErrUnexpectedStatusCode(res.Status)
 	}
 
 	body, err := ioutil.ReadAll(res.Body)
